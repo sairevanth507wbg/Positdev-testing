@@ -1,0 +1,4 @@
+# Force LF everywhere. manifest.json stores byte checksums of app.py and
+# requirements.txt; if Windows checked those out as CRLF, the checksums written
+# here would not match what Connect sees after cloning on Linux.
+* text=auto eol=lf
