@@ -104,13 +104,40 @@ touched needs regenerating.
 `core.autocrlf=true` your checkout would be CRLF while Connect clones LF on
 Linux — so locally-generated checksums would not match what Connect sees.
 
-## Server requirements
+## Pinning the Python version
 
-- **Python 3.13** — each `manifest.json` records `3.13.7`. Connect matches an
-  installed interpreter; if the server has no 3.13.x, deployment fails. Lower
-  the pins and regenerate if your server runs older Python.
-- `pandas==3.0.5` / `numpy==2.5.2` are recent. If Connect installs from an
-  internal mirror rather than PyPI, confirm those versions are available.
+Connect matches the app against the interpreters its execution environment
+actually provides. This one offers **3.11.14, 3.12.12, 3.14.3**; ask for
+anything else and the deploy fails before installing a single package:
+
+```
+Cannot find compatible environment: no compatible Kubernetes environment
+with Python version 3.13.7 (available versions: 3.11.14, 3.12.12, 3.14.3)
+```
+
+Each app therefore carries a **`.python-version`** file. `rsconnect` reads it
+and writes `environment.python.requires` into the manifest, so regenerating
+never silently reverts to whatever Python happens to be on your laptop — which
+is exactly how the failure above was introduced.
+
+`apps/sales-explorer` targets **3.12.12**:
+
+| | |
+|---|---|
+| `.python-version` | `3.12.12` |
+| `manifest.json` → `environment.python.requires` | `~=3.12.0` |
+| `manifest.json` → `python.version` | `3.12.12` |
+
+Keep those three consistent. `rsconnect` writes `python.version` from the
+*local* interpreter, so after regenerating on a machine with a different Python
+you must reset that field by hand.
+
+3.11.14 is **not** an option here: `numpy==2.5.2` requires `>=3.12`. 3.14.3
+would work — every pin has cp314 wheels — but 3.12 has the more settled
+ecosystem.
+
+If Connect installs from an internal mirror rather than PyPI, confirm
+`pandas==3.0.5` and `numpy==2.5.2` are available there before deploying.
 
 ## Deploy to Posit Connect Cloud
 

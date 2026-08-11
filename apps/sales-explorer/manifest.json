@@ -6,16 +6,24 @@
     "entrypoint": "app:app"
   },
   "python": {
-    "version": "3.13.7",
+    "version": "3.12.12",
     "package_manager": {
       "name": "pip",
       "version": "25.2",
       "package_file": "requirements.txt"
     }
   },
+  "environment": {
+    "python": {
+      "requires": "~=3.12.0"
+    }
+  },
   "files": {
     "requirements.txt": {
       "checksum": "dbfb90732b2a429d029df91331467074"
+    },
+    ".python-version": {
+      "checksum": "6e26403a9100be6ac9b0682f33e8b093"
     },
     "app.py": {
       "checksum": "60e3141bc82fa004097f1836b712f95a"

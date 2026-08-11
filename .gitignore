@@ -3,7 +3,6 @@ __pycache__/
 .venv/
 venv/
 env/
-.python-version
 
 # rsconnect-python deployment records (contain server URLs; regenerate locally)
 rsconnect-python/
