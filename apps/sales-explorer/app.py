@@ -16,6 +16,8 @@ import numpy as np
 import pandas as pd
 from shiny import App, reactive, render, ui
 
+APP_VERSION = "1.1.0"
+
 REGIONS = ["North", "South", "East", "West"]
 CHANNELS = ["Online", "Retail", "Partner"]
 SEED = 20260811
@@ -70,6 +72,7 @@ app_ui = ui.page_sidebar(
             "min_revenue", "Minimum order value", min=0, max=6000, value=0, step=250
         ),
         ui.input_action_button("reset", "Reset filters", class_="btn-outline-secondary"),
+        ui.download_button("download_orders", "Download CSV", class_="btn-outline-primary"),
         width=280,
         open="desktop",
     ),
@@ -96,7 +99,7 @@ app_ui = ui.page_sidebar(
         ui.card_header("Runtime"),
         ui.output_ui("runtime_info"),
     ),
-    title="Positdev sales explorer",
+    title=f"Positdev sales explorer v{APP_VERSION}",
     fillable=False,
 )
 
@@ -161,9 +164,14 @@ def server(input, output, session):
         out.columns = ["Date", "Region", "Channel", "Units", "Unit price", "Revenue"]
         return render.DataGrid(out, width="100%", height="360px")
 
+    @render.download(filename="filtered_orders.csv")
+    def download_orders():
+        yield filtered().to_csv(index=False)
+
     @render.ui
     def runtime_info():
         rows = [
+            ("App version", APP_VERSION),
             ("Python", sys.version.split()[0]),
             ("Platform", platform.platform()),
             ("Host", socket.gethostname()),
